@@ -5,11 +5,17 @@ vim.g.mapleader = " "
 vim.g.maplocalleader = " "
 
 -- Tabs (vim-sleuth does most of the work)
-vim.opt.shiftwidth = 4
+vim.opt.tabstop = 4
+
+-- Search highlights
+vim.opt.hlsearch = false
 
 -- Line numbers
 vim.wo.number = true
 vim.wo.relativenumber = true
+
+-- Soft wrap at word boundaries
+vim.opt.linebreak = true
 
 -- Bootstrap lazy
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
@@ -49,7 +55,25 @@ require("lazy").setup({
       "rafamadriz/friendly-snippets",
     },
   },
-
+  { "junegunn/goyo.vim" },
+  { "justinmk/vim-sneak" },
+  { 
+    "prettier/vim-prettier",
+    config = function()
+      vim.cmd [[
+        let g:prettier#autoformat = 1
+        let g:prettier#autoformat_require_pragma = 0
+      ]]
+    end
+  },
+  {
+    "nvim-neo-tree/neo-tree.nvim",
+    dependencies = {
+      "nvim-lua/plenary.nvim",
+      "nvim-tree/nvim-web-devicons", -- not strictly required, but recommended
+      "MunifTanjim/nui.nvim",
+    }
+  },
   {
     "neovim/nvim-lspconfig",
     dependencies = {
@@ -144,7 +168,7 @@ vim.defer_fn(function()
   require("nvim-treesitter.configs").setup {
     -- Add languages to be installed here that you want installed for treesitter
     ensure_installed = { "c", "cpp", "go", "lua", "python", "rust", "tsx", "javascript", "typescript", "vimdoc", "vim",
-      "bash", "clojure" },
+      "bash", "clojure", "markdown" },
 
     -- Autoinstall languages that are not installed. Defaults to false (but you can change for yourself!)
     auto_install = true,
@@ -284,11 +308,12 @@ require("mason-lspconfig").setup()
 --  define the property "filetypes" to the map in question.
 local servers = {
   -- clangd = {},
-  -- gopls = {},
-  -- pyright = {},
+  gopls = {},
+  pyright = {},
   -- rust_analyzer = {},
-  -- tsserver = {},
-  -- html = { filetypes = { "html", "twig", "hbs"} },
+  tsserver = {},
+  html = { filetypes = { "html", "twig", "hbs"} },
+  tailwindcss = {},
 
   lua_ls = {
     Lua = {
@@ -370,3 +395,12 @@ cmp.setup {
     { name = "luasnip" },
   },
 }
+
+vim.keymap.set("n", "<leader>to", "<cmd>Neotree focus<cr>", {})
+vim.keymap.set("n", "<leader>tc", "<cmd>Neotree close<cr>", {})
+
+vim.keymap.set("n", "<leader>ei", "<cmd>e ~/.config/nvim/init.lua<cr>", {})
+
+-- File types
+vim.filetype.add({ extension = { mdx = "mdx" }})
+require("nvim-treesitter.parsers").filetype_to_parsername.mdx = "markdown"
