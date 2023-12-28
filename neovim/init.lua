@@ -6,6 +6,7 @@ vim.g.maplocalleader = " "
 
 -- Tabs (vim-sleuth does most of the work)
 vim.opt.tabstop = 4
+vim.opt.shiftwidth = 4
 
 -- Search highlights
 vim.opt.hlsearch = false
@@ -40,7 +41,6 @@ require("lazy").setup({
       vim.cmd.colorscheme "tokyonight"
     end
   },
-  { "folke/which-key.nvim",  opts = {} },
   {
     "hrsh7th/nvim-cmp",
     dependencies = {
@@ -122,6 +122,7 @@ require("lazy").setup({
     },
     build = ":TSUpdate",
   },
+  "tpope/vim-abolish",
   "tpope/vim-fugitive",
   "tpope/vim-obsession",
   "tpope/vim-sleuth",
@@ -158,9 +159,10 @@ vim.api.nvim_create_autocmd("TextYankPost", {
 
 -- Telescope
 pcall(require("telescope").load_extension, "fzf")
-vim.keymap.set("n", "<leader>ff", require("telescope.builtin").find_files, { desc = "[F]ind [F]iles" })
-vim.keymap.set("n", "<leader>fw", require("telescope.builtin").grep_string, { desc = "[F]ind current [W]ord" })
-vim.keymap.set("n", "<leader>fg", require("telescope.builtin").live_grep, { desc = "[F]ind by [G]rep" })
+vim.keymap.set("n", "<leader>ff", require("telescope.builtin").find_files)
+vim.keymap.set("n", "<leader>fw", require("telescope.builtin").grep_string)
+vim.keymap.set("n", "<leader>fg", require("telescope.builtin").live_grep)
+vim.keymap.set("n", "<leader>fs", require("telescope.builtin").lsp_workspace_symbols)
 
 -- Treesitter
 -- Defer Treesitter setup after first render to improve startup time of "nvim {filename}"
@@ -281,17 +283,6 @@ local on_attach = function(_, bufnr)
     vim.lsp.buf.format()
   end, { desc = "Format current buffer with LSP" })
 end
-
--- document existing key chains
-require("which-key").register {
-  ["<leader>c"] = { name = "[C]ode", _ = "which_key_ignore" },
-  ["<leader>d"] = { name = "[D]ocument", _ = "which_key_ignore" },
-  ["<leader>g"] = { name = "[G]it", _ = "which_key_ignore" },
-  ["<leader>h"] = { name = "More git", _ = "which_key_ignore" },
-  ["<leader>r"] = { name = "[R]ename", _ = "which_key_ignore" },
-  ["<leader>s"] = { name = "[S]earch", _ = "which_key_ignore" },
-  ["<leader>w"] = { name = "[W]orkspace", _ = "which_key_ignore" },
-}
 
 -- mason-lspconfig requires that these setup functions are called in this order
 -- before setting up the servers.
